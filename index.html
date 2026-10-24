@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>OM Udine</title>
+<meta name="theme-color" content="#0f3d5c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OM Udine">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--bg:#0f3d5c;--ink:#eef4f8;--muted:#b8cad6;--accent:#f2b632}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+body{display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#frames{flex:1;position:relative;min-height:0}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+#off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:var(--bg)}
+#off[hidden]{display:none}
+#off p{max-width:30em;color:var(--muted);margin:0}
+#off button{border:0;background:var(--accent);color:#1a1300;border-radius:8px;padding:10px 16px;font:600 15px inherit}
+#load{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div id="frames">
+  <div id="load">Caricamento…</div>
+  <iframe id="f" title="OM Udine" allow="geolocation; fullscreen; clipboard-write; camera"></iframe>
+  <div id="off" hidden>
+    <strong>Serve la connessione a internet</strong>
+    <p>OM Udine viene caricato dal sito Apps Script. Collegati a internet e riprova.</p>
+    <button type="button" id="retry">Riprova</button>
+  </div>
+</div>
+<script>
+// Link del sito Apps Script "OM Udine" (quello che finisce con /exec)
+var SITO = 'https://script.google.com/macros/s/AKfycbysJ9YMOnOL1EI60rM5gquSgKb1icki22qnHwJ4vgyDd7hXBd5-oN3L2Dg48ez1D1E-5w/exec';
+(function(){
+  var f=document.getElementById('f'), off=document.getElementById('off');
+  function apri(){
+    if(!navigator.onLine){ off.hidden=false; return; }
+    off.hidden=true; f.src=SITO;
+  }
+  f.addEventListener('load',function(){ document.getElementById('load').hidden=true; });
+  document.getElementById('retry').onclick=apri;
+  window.addEventListener('online',function(){ if(!off.hidden) apri(); });
+  apri();
+  if('serviceWorker' in navigator){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+})();
+</script>
+</body>
+</html>
